@@ -36,7 +36,7 @@ $totalQuantitySoldData = $query->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <!-- navbar content -->
-        <a class="navbar-brand" href="#"><img src="UI/images/brand_logo.png" alt="Company Logo" class="logo" style="height: 30px;"></a>
+        <a class="navbar-brand" href="#"><img src="http://localhost:4566/img-bucket/S3s/images/brand_logo.png" alt="Company Logo" class="logo" style="height: 30px;"></a>
         <a class="nav-link text-white bg-info" href="orderManagement.php" style="border-radius:5px; height: 40px;">Orders</a>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">

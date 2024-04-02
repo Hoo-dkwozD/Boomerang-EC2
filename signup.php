@@ -13,11 +13,11 @@ if (isset($_SESSION['login_status'])) {
 <head>
     <title>Sign Up</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="UI/css/style.css">
+    <link rel="stylesheet" href="http://localhost:4566/css-bucket/S3s/css/style.css">
 </head>
 <body>
     <div class="form-container">
-    <img src="UI/images/brand_logo.png" alt="Company Logo" class="logo">
+    <img src="http://localhost:4566/img-bucket/S3s/images/brand_logo.png" alt="Company Logo" class="logo">
         <h2 class="text-center mb-4">Sign Up</h2>
         <form action="signupLogic.php" method="POST">
             <div class="form-group">

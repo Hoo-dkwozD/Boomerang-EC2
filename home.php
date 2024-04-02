@@ -23,11 +23,11 @@ $products = getProducts($currentCategory);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="UI/css/style.css">
+    <link rel="stylesheet" href="http://localhost:4566/css-bucket/S3s/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#"><img src="UI/images/brand_logo.png" alt="Company Logo" class="logo"></a>
+        <a class="navbar-brand" href="#"><img src="http://localhost:4566/img-bucket/S3s/images/brand_logo.png" alt="Company Logo" class="logo"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -68,7 +68,7 @@ $products = getProducts($currentCategory);
             <?php foreach ($products as $product) { ?>
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="item-card">
-                        <img src="UI/images/<?php echo $product['image_filename']; ?>" alt="<?php echo $product['name']; ?>" class="img-fluid">
+                        <img src="http://localhost:4566/img-bucket/S3s/images/<?php echo $product['image_filename']; ?>" alt="<?php echo $product['name']; ?>" class="img-fluid">
                         <h5><?php echo $product['name']; ?></h5>
                         <p><?php echo $product['description']; ?></p>
                         <p>$<?php echo $product['price']; ?></p>

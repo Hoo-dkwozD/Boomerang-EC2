@@ -113,7 +113,7 @@ $orders = $query->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#"><img src="UI/images/brand_logo.png" alt="Company Logo" class="logo" style="height: 30px;"></a>
+        <a class="navbar-brand" href="#"><img src="http://localhost:4566/img-bucket/S3s/images/brand_logo.png" alt="Company Logo" class="logo" style="height: 30px;"></a>
         <a class="nav-link text-white bg-info" href="dashboard.php" style="border-radius:5px; height: 40px;">Admin Dashboard</a>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
