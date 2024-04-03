@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //     ':password' => ['S' => $password]
             // ]
         ]);
-        $user = $result['Items'][1] ? count($result['Items']) > 0 : NULL;
+        $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
     } catch (AwsException $e) {
         $user = NULL;
     }
@@ -36,18 +36,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // if user exists in db
     if ($user) {
         // check if user is an admin or customer - if admin, go to orderManagement.php else home.php
-        if ($user['role']['S'] == 'admin') {
-            $_SESSION['id'] = $user['id']['N'];
-            $_SESSION['username'] = $user['username']['S'];
-            $_SESSION['email'] = $user['email']['S'];
+        if ($user['role']['M']['S'] == 'admin') {
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['username'] = $user['username']['M']['S'];
+            $_SESSION['email'] = $user['email']['M']['S'];
             $_SESSION['role'] = 'admin';
             $_SESSION['login_status'] = TRUE;
             header("Location: dashboard.php");
             exit();
         } else {
-            $_SESSION['id'] = $user['id']['N'];
-            $_SESSION['username'] = $user['username']['S'];
-            $_SESSION['email'] = $user['email']['S'];
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['username'] = $user['username']['M']['S'];
+            $_SESSION['email'] = $user['email']['M']['S'];
             $_SESSION['role'] = 'customer';
             $_SESSION['login_status'] = TRUE;
             header("Location: home.php");
