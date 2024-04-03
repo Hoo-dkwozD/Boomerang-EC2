@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     ],
                     "UpdateExpression" => "SET #Q = #Q - :q",
                     "ExpressionAttributeValues" => [
-                        ":q" => ['N' => $productQuantity]
+                        ":q" => ['N' => strval($productQuantity)]
                     ],
                     "EXPRESSION_ATTRIBUTE_NAMES" => [
                         "#Q" => "quantity"
@@ -80,10 +80,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $add_sale_params = [
                     "TableName" => "sales",
                     "Item" => [
-                        "purchase_id" => ['N' => $purchase_id],
-                        "product_id" => ['N' => $productId],
-                        "quantity_sold" => ['N' => $productQuantity],
-                        "total_price" => ['N' => $total_price],
+                        "purchase_id" => ['N' => strval($purchase_id)],
+                        "product_id" => ['N' => strval($productId)],
+                        "quantity_sold" => ['N' => strval($productQuantity)],
+                        "total_price" => ['N' => strval($total_price)],
                         "sale_date" => ['S' => date("Y-m-d H:i:s")]
                     ]
                 ];
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $get_user_params = [
                 "TableName" => "users",
                 "Key" => [
-                    "id" => ['N' => $_SESSION["id"]]
+                    "id" => ['N' => strval($_SESSION["id"])]
                 ]
             ];
 
@@ -138,9 +138,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $add_order_params = [
                     "TableName" => "orders",
                     "Item" => [
-                        "order_id" => ['N' => $purchase_id],
-                        "customer_id" => ['N' => $_SESSION["id"]],
-                        "total_amount" => ['N' => $order_total_price],
+                        "order_id" => ['N' => strval($purchase_id)],
+                        "customer_id" => ['N' => strval($_SESSION["id"])],
+                        "total_amount" => ['N' => strval($order_total_price)],
                         "shipping_address" => ['S' => $shipping_address],
                         "order_status" => ['S' => 'received']
                     ]
