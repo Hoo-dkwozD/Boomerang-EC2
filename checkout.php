@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     "ExpressionAttributeValues" => [
                         ":q" => ['N' => strval($productQuantity)]
                     ],
-                    "EXPRESSION_ATTRIBUTE_NAMES" => [
+                    "ExpressionAttributeNames" => [
                         "#Q" => "quantity"
                     ]
                 ];
