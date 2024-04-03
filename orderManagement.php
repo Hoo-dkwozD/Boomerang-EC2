@@ -6,10 +6,10 @@ if (!isset($_SESSION['login_status']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-require_once 'Database/db_config.php';
-
+require_once 'db_config.php';
 require __DIR__ . "/vendor/autoload.php";
 
+use Aws\Exception\AwsException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
@@ -17,9 +17,24 @@ use PHPMailer\PHPMailer\SMTP;
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
     $order_id = $_POST["order_id"];
     if ($_POST["order_status"] == "order_sent") {
-        $query = $db->prepare("UPDATE orders SET order_status = 'order_sent' WHERE order_id = :order_id");
-        $query->bindParam(':order_id', $order_id);
-        $query->execute();
+        // TODO
+        // $query = $db->prepare("UPDATE orders SET order_status = 'order_sent' WHERE order_id = :order_id");
+        // $query->bindParam(':order_id', $order_id);
+        // $query->execute();
+        try {
+            $result = $db->updateItem([
+                'TableName' => 'orders',
+                'Key' => [
+                    'order_id' => ['N' => $order_id]
+                ],
+                'UpdateExpression' => 'SET order_status = :order_status',
+                'ExpressionAttributeValues' => [
+                    ':order_status' => ['S' => 'order_sent']
+                ]
+            ]);
+        } catch (AwsException $e) {
+            echo $e->getMessage();
+        }
 
         // send email to customer on new order_status
         $mail = new PHPMailer(true);
@@ -38,14 +53,62 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
 
         $mail->setFrom("Guganesh99@gmail.com", "Boomerang Electronics");
 
+        // TODO
         // get user email from user table
-        $query = $db->prepare("SELECT email, username FROM users WHERE id IN (SELECT customer_id FROM orders WHERE order_id = :order_id)");
-        $query->bindParam(':order_id', $order_id);
-        $query->execute();
-        $user = $query->fetch(PDO::FETCH_ASSOC);
+        // $query = $db->prepare("SELECT email, username FROM users WHERE id IN (SELECT customer_id FROM orders WHERE order_id = :order_id)");
+        // $query->bindParam(':order_id', $order_id);
+        // $query->execute();
+        // $user = $query->fetch(PDO::FETCH_ASSOC);
 
-        if ($user) {
-            $mail->addAddress($user['email'], $user['username']);
+        // Specify the table name
+        $tableName = 'orders';
+
+        // Define the parameters for the Query operation
+        $params = [
+            'TableName' => $tableName,
+            'KeyConditionExpression' => 'order_id = :order_id',
+            'ExpressionAttributeValues' => [
+                ':order_id' => ['S' => $order_id]
+            ]
+        ];
+
+        try {
+            // Perform the Query operation on the GSI
+            $result = $db->query($params);
+
+            // Check if any items were returned
+            if (!empty($result['Items'])) {
+                // Extract the customer IDs from the query results
+                $customerIds = array_column($result['Items'], 'customer_id')['S'];
+
+                // Retrieve the user details from the main table
+                $users = [];
+                foreach ($customerIds as $customerId) {
+                    $userParams = [
+                        'TableName' => 'users',
+                        'Key' => [
+                            'id' => ['S' => $customerId]
+                        ]
+                    ];
+                    $userResult = $db->getItem($userParams);
+                    if (isset($userResult['Item'])) {
+                        $user = $userResult['Item'];
+                        $users[] = [
+                            'email' => $user['email']['S'],
+                            'username' => $user['username']['S']
+                        ];
+                    }
+                }
+            } else {
+                echo "No users found for the specified order ID.\n";
+            }
+        } catch (AwsException $e) {
+            // Display error message
+            echo $e->getMessage() . "\n";
+        }
+
+        if ($users) {
+            $mail->addAddress($users[0]['email'], $users[0]['username']);
         }
 
         $mail->Subject = "Order Number: " . $order_id . " has been sent.";
@@ -54,9 +117,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
         $mail->send();
 
     } else if ($_POST["order_status"] == "resolved") {
-        $query = $db->prepare("UPDATE orders SET order_status = 'resolved' WHERE order_id = :order_id");
-        $query->bindParam(':order_id', $order_id);
-        $query->execute();
+        // TODO
+        // $query = $db->prepare("UPDATE orders SET order_status = 'resolved' WHERE order_id = :order_id");
+        // $query->bindParam(':order_id', $order_id);
+        // $query->execute();
+
+        try {
+            $result = $db->updateItem([
+                'TableName' => 'orders',
+                'Key' => [
+                    'order_id' => ['N' => $order_id]
+                ],
+                'UpdateExpression' => 'SET order_status = :order_status',
+                'ExpressionAttributeValues' => [
+                    ':order_status' => ['S' => 'resolved']
+                ]
+            ]);
+        } catch (AwsException $e) {
+            echo $e->getMessage();
+        }
 
         // send email to customer on new order_status
         $mail = new PHPMailer(true);
@@ -75,14 +154,62 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
 
         $mail->setFrom("Guganesh99@gmail.com", "Boomerang Electronics");
 
+        // TODO
         // get user email from the user table
-        $query = $db->prepare("SELECT email, username FROM users WHERE id IN (SELECT customer_id FROM orders WHERE order_id = :order_id)");
-        $query->bindParam(':order_id', $order_id);
-        $query->execute();
-        $user = $query->fetch(PDO::FETCH_ASSOC);
+        // $query = $db->prepare("SELECT email, username FROM users WHERE id IN (SELECT customer_id FROM orders WHERE order_id = :order_id)");
+        // $query->bindParam(':order_id', $order_id);
+        // $query->execute();
+        // $user = $query->fetch(PDO::FETCH_ASSOC);
 
-        if ($user) {
-            $mail->addAddress($user['email'], $user['username']);
+        // Specify the table name
+        $tableName = 'orders';
+
+        // Define the parameters for the Query operation
+        $params = [
+            'TableName' => $tableName,
+            'KeyConditionExpression' => 'order_id = :order_id',
+            'ExpressionAttributeValues' => [
+                ':order_id' => ['S' => $order_id]
+            ]
+        ];
+
+        try {
+            // Perform the Query operation on the GSI
+            $result = $db->query($params);
+
+            // Check if any items were returned
+            if (!empty($result['Items'])) {
+                // Extract the customer IDs from the query results
+                $customerIds = array_column($result['Items'], 'customer_id')['S'];
+
+                // Retrieve the user details from the main table
+                $users = [];
+                foreach ($customerIds as $customerId) {
+                    $userParams = [
+                        'TableName' => 'users',
+                        'Key' => [
+                            'id' => ['S' => $customerId]
+                        ]
+                    ];
+                    $userResult = $db->getItem($userParams);
+                    if (isset($userResult['Item'])) {
+                        $user = $userResult['Item'];
+                        $users[] = [
+                            'email' => $user['email']['S'],
+                            'username' => $user['username']['S']
+                        ];
+                    }
+                }
+            } else {
+                echo "No users found for the specified order ID.\n";
+            }
+        } catch (AwsException $e) {
+            // Display error message
+            echo $e->getMessage() . "\n";
+        }
+
+        if ($users) {
+            $mail->addAddress($users[0]['email'], $users[0]['username']);
         }
 
         $mail->Subject = "Order Number: " . $order_id . " has been resolved.";
@@ -92,10 +219,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
     }
 }
 
+// TODO
 // get orders from the database
-$query = $db->prepare("SELECT order_id, customer_id, order_date, total_amount, order_status FROM orders");
-$query->execute();
-$orders = $query->fetchAll(PDO::FETCH_ASSOC);
+// $query = $db->prepare("SELECT order_id, customer_id, order_date, total_amount, order_status FROM orders");
+// $query->execute();
+// $orders = $query->fetchAll(PDO::FETCH_ASSOC);
+
+try {
+    $result = $db->scan([
+        'TableName' => 'orders'
+    ]);
+
+    $orders = $result['Items'];
+} catch (AwsException $e) {
+    $orders = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -142,23 +280,23 @@ $orders = $query->fetchAll(PDO::FETCH_ASSOC);
         <tbody>
             <?php foreach ($orders as $order) { ?>
                 <tr>
-                    <td><?php echo $order['order_id']; ?></td>
-                    <td><?php echo $order['customer_id']; ?></td>
-                    <td><?php echo $order['order_date']; ?></td>
-                    <td><?php echo $order['total_amount']; ?></td>
-                    <td><?php echo $order['order_status']; ?></td>
+                    <td><?php echo $order['order_id']['N']; ?></td>
+                    <td><?php echo $order['customer_id']['N']; ?></td>
+                    <td><?php echo $order['order_date']['S']; ?></td>
+                    <td><?php echo $order['total_amount']['N']; ?></td>
+                    <td><?php echo $order['order_status']['S']; ?></td>
                     <td>
-                        <?php if ($order['order_status'] !== 'order_sent' && $order['order_status'] !== 'resolved') { ?>
+                        <?php if ($order['order_status']['S'] !== 'order_sent' && $order['order_status']['S'] !== 'resolved') { ?>
                             <form action="" method="POST">
                                 <input type="hidden" name="order_status" value="order_sent">
-                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']['N']; ?>">
                                 <button type="submit">Order Sent</button>
                             </form>
                         <?php } ?>
-                        <?php if ($order['order_status'] !== 'resolved' && $order['order_status'] === 'order_sent') { ?>
+                        <?php if ($order['order_status']['S'] !== 'resolved' && $order['order_status']['S'] === 'order_sent') { ?>
                             <form action="" method="POST">
                                 <input type="hidden" name="order_status" value="resolved">
-                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']['N']; ?>">
                                 <button type="submit">Resolved</button>
                             </form>
                         <?php } ?>

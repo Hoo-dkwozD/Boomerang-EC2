@@ -6,17 +6,76 @@ if (!isset($_SESSION['login_status']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-require_once 'Database/db_config.php';
+require_once 'db_config.php';
+require __DIR__ . "/vendor/autoload.php";
 
+use Aws\Exception\AwsException;
+
+// TODO
 // get total sales by date
-$query = $db->prepare("SELECT DATE(sale_date) as sale_date, SUM(total_price) as total_sales FROM sales GROUP BY DATE(sale_date)");
-$query->execute();
-$totalSalesData = $query->fetchAll(PDO::FETCH_ASSOC);
+// $query = $db->prepare("SELECT DATE(sale_date) as sale_date, SUM(total_price) as total_sales FROM sales GROUP BY DATE(sale_date)");
+// $query->execute();
+// $totalSalesData = $query->fetchAll(PDO::FETCH_ASSOC);
+try {
+    // Perform the Scan operation on the DynamoDB table
+    $result = $db->scan([
+        'TableName' => 'sales'
+    ]);
 
+    // Initialize an array to store total sales data
+    $totalSalesData = [];
+
+    // Loop through the returned items
+    foreach ($result['Items'] as $item) {
+        // Extract the sale_date and total_price attributes
+        $saleDate = $item['sale_date']['S'];
+        $totalPrice = $item['total_price']['N'];
+
+        // Check if the date already exists in the totalSalesData array
+        if (isset($totalSalesData[$saleDate])) {
+            // If it exists, add the total_price to the existing total for that date
+            $totalSalesData[$saleDate] += $totalPrice;
+        } else {
+            // If it doesn't exist, initialize the total for that date
+            $totalSalesData[$saleDate] = $totalPrice;
+        }
+    }
+} catch (AwsException $e) {
+    $totalSalesData = [];
+}
+
+// TODO
 // get total sales by product
-$query = $db->prepare("SELECT product_id, SUM(quantity_sold) as total_quantity_sold FROM sales GROUP BY product_id");
-$query->execute();
-$totalQuantitySoldData = $query->fetchAll(PDO::FETCH_ASSOC);
+// $query = $db->prepare("SELECT product_id, SUM(quantity_sold) as total_quantity_sold FROM sales GROUP BY product_id");
+// $query->execute();
+// $totalQuantitySoldData = $query->fetchAll(PDO::FETCH_ASSOC);
+try {
+    // Perform the Scan operation on the DynamoDB table
+    $result = $db->scan([
+        'TableName' => 'sales'
+    ]);
+
+    // Initialize an array to store total quantity sold data
+    $totalQuantitySoldData = [];
+
+    // Loop through the returned items
+    foreach ($result['Items'] as $item) {
+        // Extract the product_id and quantity_sold attributes
+        $productId = $item['product_id']['N'];
+        $quantitySold = $item['quantity_sold']['N'];
+
+        // Check if the product_id already exists in the totalQuantitySoldData array
+        if (isset($totalQuantitySoldData[$productId])) {
+            // If it exists, add the quantity_sold to the existing total for that product
+            $totalQuantitySoldData[$productId] += $quantitySold;
+        } else {
+            // If it doesn't exist, initialize the total for that product
+            $totalQuantitySoldData[$productId] = $quantitySold;
+        }
+    }
+} catch (AwsException $e) {
+    $totalQuantitySoldData = [];
+}
 ?>
 
 <!DOCTYPE html>

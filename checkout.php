@@ -1,8 +1,9 @@
 <?php
 session_start();
-require_once 'Database/db_config.php';
+require_once 'db_config.php';
 require __DIR__ . "/vendor/autoload.php";
 
+use Aws\Exception\AwsException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
@@ -34,39 +35,121 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ]
             ];
 
+            // TODO
             // update the products table with the reduced quantity
-            $query = $db->prepare("UPDATE products SET quantity = quantity - :quantity WHERE id = :id");
-            $query->bindParam(':quantity', $productQuantity);
-            $query->bindParam(':id', $productId);
-            $query->execute();
+            // $query = $db->prepare("UPDATE products SET quantity = quantity - :quantity WHERE id = :id");
+            // $query->bindParam(':quantity', $productQuantity);
+            // $query->bindParam(':id', $productId);
+            // $query->execute();
 
+            try {
+                $update_pdt_params = [
+                    "TableName" => "products",
+                    "Key" => [
+                        "id" => ['N' => $productId]
+                    ],
+                    "UpdateExpression" => "SET quantity = quantity - :quantity",
+                    "ExpressionAttributeValues" => [
+                        ":quantity" => ['N' => $productQuantity]
+                    ]
+                ];
+
+                $result = $db->updateItem(
+                    $update_pdt_params
+                );
+            } catch (AwsException $e) {
+                echo "Unable to update product quantity:\n";
+                echo $e->getMessage() . "\n";
+            }
+
+            // TODO
             // add purchase information into sales table
             $total_price = $productQuantity * $productPrice;
             $order_total_price += $total_price;
-            $query = $db->prepare("INSERT INTO sales (purchase_id, product_id, quantity_sold, total_price, sale_date) VALUES (:purchase_id, :product_id, :quantity_sold, :total_price, NOW())");
-            $query->bindParam(':purchase_id', $purchase_id);
-            $query->bindParam(':product_id', $productId);
-            $query->bindParam(':quantity_sold', $productQuantity);
-            $query->bindValue(':total_price', $total_price);
-            $query->execute();            
+            // $query = $db->prepare("INSERT INTO sales (purchase_id, product_id, quantity_sold, total_price, sale_date) VALUES (:purchase_id, :product_id, :quantity_sold, :total_price, NOW())");
+            // $query->bindParam(':purchase_id', $purchase_id);
+            // $query->bindParam(':product_id', $productId);
+            // $query->bindParam(':quantity_sold', $productQuantity);
+            // $query->bindValue(':total_price', $total_price);
+            // $query->execute();    
+            
+            try {
+                $add_sale_params = [
+                    "TableName" => "sales",
+                    "Item" => [
+                        "purchase_id" => ['N' => $purchase_id],
+                        "product_id" => ['N' => $productId],
+                        "quantity_sold" => ['N' => $productQuantity],
+                        "total_price" => ['N' => $total_price],
+                        "sale_date" => ['S' => date("Y-m-d H:i:s")]
+                    ]
+                ];
+
+                $result = $db->putItem(
+                    $add_sale_params
+                );
+            } catch (AwsException $e) {
+                echo "Unable to add sale:\n";
+                echo $e->getMessage() . "\n";
+            }
         }
 
-         // get shipping address information from the database - not storing in SESSION for security reasons
-         $query = $db->prepare("SELECT shipping_address FROM users WHERE id = :id");
-         $query->bindParam(':id', $_SESSION["id"]);
-         $query->execute();
-         $user = $query->fetch(PDO::FETCH_ASSOC);
+        // TODO
+        // get shipping address information from the database - not storing in SESSION for security reasons
+        // $query = $db->prepare("SELECT shipping_address FROM users WHERE id = :id");
+        // $query->bindParam(':id', $_SESSION["id"]);
+        // $query->execute();
+        // $user = $query->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && isset($user['shipping_address'])) {
-            $shipping_address = $user['shipping_address'];
+        try {
+            $get_user_params = [
+                "TableName" => "users",
+                "Key" => [
+                    "id" => ['N' => $_SESSION["id"]]
+                ]
+            ];
+
+            $result = $db->getItem(
+                $get_user_params
+            );
+
+            $user = $result['Item'];
+        } catch (AwsException $e) {
+            echo "Unable to get user:\n";
+            echo $e->getMessage() . "\n";
+        }
+
+        if ($user && isset($user['shipping_address']['S'])) {
+            $shipping_address = $user['shipping_address']['S'];
+            // TODO
             // add order information into order table
-            $query = $db->prepare("INSERT INTO orders (order_id, customer_id, total_amount, shipping_address, order_status) VALUES (:order_id, :customer_id, :total_amount, :shipping_address, :order_status)");
-            $query->bindParam(':order_id', $purchase_id);
-            $query->bindParam(':customer_id', $_SESSION["id"]);
-            $query->bindParam(':total_amount', $order_total_price);
-            $query->bindValue(':shipping_address', $shipping_address);
-            $query->bindValue(':order_status', 'received');
-            $query->execute();
+            // $query = $db->prepare("INSERT INTO orders (order_id, customer_id, total_amount, shipping_address, order_status) VALUES (:order_id, :customer_id, :total_amount, :shipping_address, :order_status)");
+            // $query->bindParam(':order_id', $purchase_id);
+            // $query->bindParam(':customer_id', $_SESSION["id"]);
+            // $query->bindParam(':total_amount', $order_total_price);
+            // $query->bindValue(':shipping_address', $shipping_address);
+            // $query->bindValue(':order_status', 'received');
+            // $query->execute();
+
+            try {
+                $add_order_params = [
+                    "TableName" => "orders",
+                    "Item" => [
+                        "order_id" => ['N' => $purchase_id],
+                        "customer_id" => ['N' => $_SESSION["id"]],
+                        "total_amount" => ['N' => $order_total_price],
+                        "shipping_address" => ['S' => $shipping_address],
+                        "order_status" => ['S' => 'received']
+                    ]
+                ];
+
+                $result = $db->putItem(
+                    $add_order_params
+                );
+            } catch (AwsException $e) {
+                echo "Unable to add order:\n";
+                echo $e->getMessage() . "\n";
+            }
         }
 
         // send email to customer on new order_status
@@ -108,12 +191,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 function generatePurchaseId() {
+    // TODO
     global $db;
-    $query = $db->query("SELECT MAX(purchase_id) as max_id FROM sales");
-    $row = $query->fetch(PDO::FETCH_ASSOC);
-    $latest_id = $row['max_id'];
-    // Increment the latest_id to generate a new purchase_id
-    $new_purchase_id = $latest_id + 1;
-    return $new_purchase_id;
+    // $query = $db->query("SELECT MAX(purchase_id) as max_id FROM sales");
+    // $row = $query->fetch(PDO::FETCH_ASSOC);
+    // $latest_id = $row['max_id'];
+    try {
+        $get_max_purchase_id_params = [
+            "TableName" => "sales",
+            "ProjectionExpression" => "purchase_id",
+            "Select" => "MAX"
+        ];
+
+        $result = $db->scan(
+            $get_max_purchase_id_params
+        );
+
+        $latest_id = $result['Items'][0]['purchase_id']['N'];
+
+        // Increment the latest_id to generate a new purchase_id
+        $new_purchase_id = $latest_id + 1;
+        return $new_purchase_id;
+    } catch (AwsException $e) {
+        return 'Unable to generate purchase_id';
+    }
 }
 ?>

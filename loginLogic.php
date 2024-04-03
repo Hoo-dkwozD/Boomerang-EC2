@@ -1,35 +1,52 @@
 <?php
 session_start();
-require_once 'Database/db_config.php';
+require_once 'db_config.php';
+require __DIR__ . "/vendor/autoload.php";
+
+use Aws\Exception\AwsException;
 
 // checks request method. If "POST", form in login.php was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    $query = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
-    $query->bindParam(':username', $username);
-    $query->bindParam(':password', $password);
+    // TODO
+    // $query = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
+    // $query->bindParam(':username', $username);
+    // $query->bindParam(':password', $password);
     
     // executes query prepared and fetch results as an associative array
-    $query->execute();
-    $user = $query->fetch(PDO::FETCH_ASSOC);
+    // $query->execute();
+    // $user = $query->fetch(PDO::FETCH_ASSOC);
+
+    try {
+        $result = $db->getItem([
+            'TableName' => 'users',
+            'Key' => [
+                'username' => ['S' => $username],
+                'password' => ['S' => $password]
+            ]
+        ]);
+        $user = $result['Item'][0] ? count($result['Item']) > 0 : NULL;
+    } catch (AwsException $e) {
+        $user = NULL;
+    }
 
     // if user exists in db
     if ($user) {
         // check if user is an admin or customer - if admin, go to orderManagement.php else home.php
-        if ($user['role'] == 'admin') {
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['email'] = $user['email'];
+        if ($user['role']['S'] == 'admin') {
+            $_SESSION['id'] = $user['id']['N'];
+            $_SESSION['username'] = $user['username']['S'];
+            $_SESSION['email'] = $user['email']['S'];
             $_SESSION['role'] = 'admin';
             $_SESSION['login_status'] = TRUE;
             header("Location: dashboard.php");
             exit();
         } else {
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['email'] = $user['email'];
+            $_SESSION['id'] = $user['id']['N'];
+            $_SESSION['username'] = $user['username']['S'];
+            $_SESSION['email'] = $user['email']['S'];
             $_SESSION['role'] = 'customer';
             $_SESSION['login_status'] = TRUE;
             header("Location: home.php");
