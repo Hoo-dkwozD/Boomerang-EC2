@@ -43,6 +43,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // $query->execute();
 
             try {
+                $get_pdt_params = [
+                    "TableName" => "products",
+                    "Key" => [
+                        "id" => ['N' => strval($productId)]
+                    ]
+                ];
+
+                $result = $db->getItem(
+                    $get_pdt_params
+                );
+
+                $target_product = $result['Item'];
+            } catch (AwsException $e) {
+                echo "Unable to get product:\n";
+                echo $e->getMessage() . "\n";
+            }
+
+            try {
                 $update_pdt_params = [
                     "TableName" => "products",
                     "Key" => [
@@ -50,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     ],
                     "UpdateExpression" => "SET #Q = :q",
                     "ExpressionAttributeValues" => [
-                        ":q" => ['M' => ['N' => ['N' => strval($productQuantity)]]]
+                        ":q" => ['N' => strval($target_product['quantity']['N'] - $productQuantity)]
                     ],
                     "ExpressionAttributeNames" => [
                         "#Q" => "quantity"

@@ -64,6 +64,7 @@ $products = getProducts($currentCategory);
 <body>
     <!-- Product List -->
     <div class="container mt-4">
+        <h1><?php print_r($products); ?></h1>
         <div class="row">
             <?php foreach ($products as $product) { ?>
                 <div class="col-sm-6 col-md-4 col-lg-3">
