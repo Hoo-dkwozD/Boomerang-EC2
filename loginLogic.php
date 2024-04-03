@@ -30,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result['Item'][0] ? count($result['Item']) > 0 : NULL;
     } catch (AwsException $e) {
         $user = NULL;
+        echo $e->getAwsErrorMessage();
     }
 
     // if user exists in db
@@ -54,9 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         // set the error message in session variable
-        $_SESSION['login_error'] = "Invalid username or password";
-        header("Location: login.php");
-        exit();
+        // $_SESSION['login_error'] = "Invalid username or password";
+        // header("Location: login.php");
+        // exit();
     }
 }
 ?>
