@@ -22,9 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $result = $db->getItem([
             'TableName' => 'users',
-            'Key' => [
-                'username' => ['S' => $username],
-                'password' => ['S' => $password]
+            'KeyConditionExpression' => 'username = :username AND password = :password',
+            'ExpressionAttributeValues'=> [
+                ':username' => ['S' => $username],
+                ':password' => ['S' => $password]
             ]
         ]);
         $user = $result['Item'][0] ? count($result['Item']) > 0 : NULL;
