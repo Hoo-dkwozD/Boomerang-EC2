@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'TableName' => 'users'
         ]);
         foreach ($result['Items'] as $user) {
-            print_r($user['username']['M']);
+            print_r($user['username']['M']['S']['S']);
         }
         exit();
     } catch (AwsException $e) {
