@@ -49,7 +49,7 @@ function getProducts($category) {
                     'id' => $item['id']['N'],
                     'name' => $item['name']['S'],
                     'category' => $item['category']['S'],
-                    'price' => $item['price']['N'],
+                    'price' => ($item['price']['N'] / 100),
                     'description' => $item['description']['S'],
                     'image_filename' => $item['image_filename']['S'],
                     'quantity' => $item['quantity']['N']
