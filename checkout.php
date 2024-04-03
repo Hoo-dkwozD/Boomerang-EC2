@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 );
             } catch (AwsException $e) {
                 echo "Unable to add sale:\n";
-                echo $e->getMessage() . "\n";
+                echo $e . "\n";
                 exit();
             }
         }

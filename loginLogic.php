@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $db->scan([
             'TableName' => 'users'
         ]);
+        print_r($result);
+        exit();
         $user = NULL;
         foreach ($result['Items'] as $user) {
             if ($user['username']['M']['S']['S'] == $username && $user['password']['M']['S']['S'] == $password) {
