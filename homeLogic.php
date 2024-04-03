@@ -48,13 +48,16 @@ function getProducts($category) {
                 $pdts[] = [
                     'id' => $item['id']['N'],
                     'name' => $item['name']['M']['S']['S'],
+                    'category' => $item['category']['M']['S']['S'],
                     'price' => $item['price']['M']['N']['N'],
+                    'description' => $item['description']['M']['S']['S'],
+                    'image_filename' => $item['image_filename']['M']['S']['S'],
                     'quantity' => $item['quantity']['M']['N']['N']
                 ];
             }
         }
 
-        return $result['Items'];
+        return $pdts;
     } catch (AwsException $e) {
         return [];
     }
