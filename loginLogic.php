@@ -24,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'TableName' => 'users',
             'FilterExpression' => 'username = :username and password = :password',
             'ExpressionAttributeValues'=> [
-                ':username' => $username,
-                ':password' => $password
+                ':username' => ['M' => ['S' => $username]],
+                ':password' => ['M' => ['S' => $password]]
             ]
         ]);
         $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
