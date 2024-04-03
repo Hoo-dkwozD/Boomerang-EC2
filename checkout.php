@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     ],
                     "UpdateExpression" => "SET #Q = :q",
                     "ExpressionAttributeValues" => [
-                        ":q" => ['N' => strval($target_product['quantity']['N'] - $productQuantity)]
+                        ":q" => ['N' => strval(intval($target_product['quantity']['N']) - $productQuantity)]
                     ],
                     "ExpressionAttributeNames" => [
                         "#Q" => "quantity"
@@ -143,8 +143,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit();
         }
 
-        if ($user && isset($user['shipping_address']['M']['S']['S'])) {
-            $shipping_address = $user['shipping_address']['M']['S']['S'];
+        if ($user && isset($user['shipping_address']['S'])) {
+            $shipping_address = $user['shipping_address']['S'];
             // TODO
             // add order information into order table
             // $query = $db->prepare("INSERT INTO orders (order_id, customer_id, total_amount, shipping_address, order_status) VALUES (:order_id, :customer_id, :total_amount, :shipping_address, :order_status)");
@@ -221,24 +221,20 @@ function generatePurchaseId() {
     // $query = $db->query("SELECT MAX(purchase_id) as max_id FROM sales");
     // $row = $query->fetch(PDO::FETCH_ASSOC);
     // $latest_id = $row['max_id'];
-    try {
-        $get_max_purchase_id_params = [
-            "TableName" => "sales",
-            "ProjectionExpression" => "purchase_id",
-            "Select" => "MAX"
-        ];
+    $get_max_purchase_id_params = [
+        "TableName" => "sales",
+        "ProjectionExpression" => "purchase_id",
+        "Select" => "MAX"
+    ];
 
-        $result = $db->scan(
-            $get_max_purchase_id_params
-        );
+    $result = $db->scan(
+        $get_max_purchase_id_params
+    );
 
-        $latest_id = $result['Items'][0]['purchase_id']['N'];
+    $latest_id = count($result['Items']) > 0 ? intval($result['Items'][0]['purchase_id']['N']) : 0;
 
-        // Increment the latest_id to generate a new purchase_id
-        $new_purchase_id = $latest_id + 1;
-        return $new_purchase_id;
-    } catch (AwsException $e) {
-        return 'Unable to generate purchase_id';
-    }
+    // Increment the latest_id to generate a new purchase_id
+    $new_purchase_id = $latest_id + 1;
+    return $new_purchase_id;
 }
 ?>

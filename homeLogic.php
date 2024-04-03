@@ -46,13 +46,13 @@ function getProducts($category) {
         foreach ($result['Items'] as $item) {
             if ($item['category']['S'] == $category) {
                 $pdts[] = [
-                    'id' => $item['id']['N'],
+                    'id' => intval($item['id']['N']),
                     'name' => $item['name']['S'],
                     'category' => $item['category']['S'],
-                    'price' => ($item['price']['N'] / 100),
+                    'price' => (intval($item['price']['N']) / 100),
                     'description' => $item['description']['S'],
                     'image_filename' => $item['image_filename']['S'],
-                    'quantity' => $item['quantity']['N']
+                    'quantity' => intval($item['quantity']['N'])
                 ];
             }
         }
@@ -68,10 +68,10 @@ function populateCartSession() {
     // if receive request from home.php, add it to session
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // var_dump($_POST);
-        $productId = $_POST["productId"];
+        $productId = intval($_POST["productId"]);
         $productName = $_POST["productName"];
-        $productPrice = $_POST["productPrice"];
-        $productQuantity = $_POST["productQuantity"];
+        $productPrice = floatval($_POST["productPrice"]);
+        $productQuantity = intval($_POST["productQuantity"]);
 
         // check if the productQuantity is valid
         if ($productQuantity > 0 && $productQuantity <= $_POST["productQuantity"]) {
