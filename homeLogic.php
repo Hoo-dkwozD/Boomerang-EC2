@@ -57,7 +57,7 @@ function getProducts($category) {
             }
         }
 
-        return $pdts;
+        return $item;
     } catch (AwsException $e) {
         return [];
     }
