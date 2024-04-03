@@ -28,9 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ':password' => ['S' => $password]
             ]
         ]);
-        $user = NULL;
-        print_r($result);
-        exit();
+        $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
         // foreach ($result['Items'] as $user) {
         //     if ($user['username']['M']['S']['S'] == $username && $user['password']['M']['S']['S'] == $password) {
         //         $user = [
