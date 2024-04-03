@@ -30,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ]);
         $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
         echo print_r($user);
+        exit()
     } catch (AwsException $e) {
         $user = NULL;
         echo $e->getAwsErrorMessage();
