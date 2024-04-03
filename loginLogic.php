@@ -20,15 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // $user = $query->fetch(PDO::FETCH_ASSOC);
 
     try {
-        $result = $db->query([
+        $result = $db->scan([
             'TableName' => 'users',
-            'KeyConditionExpression' => 'username = :username AND password = :password',
+            'FilterExpression' => 'username = :username AND password = :password',
             'ExpressionAttributeValues'=> [
                 ':username' => ['S' => $username],
                 ':password' => ['S' => $password]
             ]
         ]);
-        $user = $result['Item'][0] ? count($result['Item']) > 0 : NULL;
+        $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
     } catch (AwsException $e) {
         $user = NULL;
         echo $e->getAwsErrorMessage();
