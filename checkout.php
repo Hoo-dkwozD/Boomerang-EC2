@@ -48,9 +48,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     "Key" => [
                         "id" => ['N' => $productId]
                     ],
-                    "UpdateExpression" => "SET quantity = quantity - :quantity",
+                    "UpdateExpression" => "SET #Q = #Q - :q",
                     "ExpressionAttributeValues" => [
-                        ":quantity" => ['N' => $productQuantity]
+                        ":q" => ['N' => $productQuantity]
+                    ],
+                    "EXPRESSION_ATTRIBUTE_NAMES" => [
+                        "#Q" => "quantity"
                     ]
                 ];
 

@@ -21,7 +21,7 @@ function getProductCategories() {
 
         $categories = [];
         foreach ($result['Items'] as $item) {
-            $categories[] = $item['category']['S'];
+            $categories[] = $item['category']['M']['S']['S'];
         }
         return array_unique($categories);
     } catch (AwsException $e) {
@@ -39,12 +39,20 @@ function getProducts($category) {
     // return $query->fetchAll(PDO::FETCH_ASSOC);
     try {
         $result = $db->scan([
-            'TableName' => 'products',
-            'FilterExpression' => 'category = :category',
-            'ExpressionAttributeValues' => [
-                ':category' => ['S' => $category]
-            ]
+            'TableName' => 'products'
         ]);
+
+        $pdts = [];
+        foreach ($result['Items'] as $item) {
+            if ($item['category']['M']['S']['S'] == $category) {
+                $pdts[] = [
+                    'id' => $item['id']['N'],
+                    'name' => $item['name']['M']['S']['S'],
+                    'price' => $item['price']['M']['N']['N'],
+                    'quantity' => $item['quantity']['M']['N']['N']
+                ];
+            }
+        }
 
         return $result['Items'];
     } catch (AwsException $e) {
