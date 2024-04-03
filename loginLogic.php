@@ -21,22 +21,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         $result = $db->scan([
-            'TableName' => 'users'
+            'TableName' => 'users',
+            'FilterExpression' => 'username = :username AND password = :password',
+            'ExpressionAttributeValues' => [
+                ':username' => ['S' => $username],
+                ':password' => ['S' => $password]
+            ]
         ]);
+        $user = NULL;
         print_r($result);
         exit();
-        $user = NULL;
-        foreach ($result['Items'] as $user) {
-            if ($user['username']['M']['S']['S'] == $username && $user['password']['M']['S']['S'] == $password) {
-                $user = [
-                    'id' => $user['id'],
-                    'username' => $user['username']['M']['S'],
-                    'email' => $user['email']['M']['S'],
-                    'role' => $user['role']['M']['S']
-                ];
-                break;
-            }
-        }
+        // foreach ($result['Items'] as $user) {
+        //     if ($user['username']['M']['S']['S'] == $username && $user['password']['M']['S']['S'] == $password) {
+        //         $user = [
+        //             'id' => $user['id'],
+        //             'username' => $user['username']['M']['S'],
+        //             'email' => $user['email']['M']['S'],
+        //             'role' => $user['role']['M']['S']
+        //         ];
+        //         break;
+        //     }
+        // }
     } catch (AwsException $e) {
         $user = NULL;
     }
