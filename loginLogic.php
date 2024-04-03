@@ -22,19 +22,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $result = $db->scan([
             'TableName' => 'users',
-            'FilterExpression' => 'username = :username and password = :password',
-            'ExpressionAttributeValues'=> [
-                ':username' => ['M' => ['S' => $username]],
-                ':password' => ['M' => ['S' => $password]]
-            ]
+            // 'FilterExpression' => 'username = :username and password = :password',
+            // 'ExpressionAttributeValues'=> [
+            //     ':username' => ['S' => $username],
+            //     ':password' => ['S' => $password]
+            // ]
         ]);
-        $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
-        echo print_r($result);
-        exit();
+        $user = $result['Items'][1] ? count($result['Items']) > 0 : NULL;
     } catch (AwsException $e) {
         $user = NULL;
-        echo $e->getAwsErrorMessage();
-        exit();
     }
 
     // if user exists in db
