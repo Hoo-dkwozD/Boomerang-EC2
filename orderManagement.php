@@ -18,9 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
     $order_id = $_POST["order_id"];
     if ($_POST["order_status"] == "order_sent") {
         // TODO
-        // $query = $db->prepare("UPDATE orders SET order_status = 'order_sent' WHERE order_id = :order_id");
-        // $query->bindParam(':order_id', $order_id);
-        // $query->execute();
         try {
             $result = $db->updateItem([
                 'TableName' => 'orders',
@@ -54,10 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
 
         // TODO
         // get user email from user table
-        // $query = $db->prepare("SELECT email, username FROM users WHERE id IN (SELECT customer_id FROM orders WHERE order_id = :order_id)");
-        // $query->bindParam(':order_id', $order_id);
-        // $query->execute();
-        // $user = $query->fetch(PDO::FETCH_ASSOC);
 
         // Specify the table name
         $tableName = 'orders';
@@ -117,9 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
 
     } else if ($_POST["order_status"] == "resolved") {
         // TODO
-        // $query = $db->prepare("UPDATE orders SET order_status = 'resolved' WHERE order_id = :order_id");
-        // $query->bindParam(':order_id', $order_id);
-        // $query->execute();
 
         try {
             $result = $db->updateItem([
@@ -155,10 +145,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
 
         // TODO
         // get user email from the user table
-        // $query = $db->prepare("SELECT email, username FROM users WHERE id IN (SELECT customer_id FROM orders WHERE order_id = :order_id)");
-        // $query->bindParam(':order_id', $order_id);
-        // $query->execute();
-        // $user = $query->fetch(PDO::FETCH_ASSOC);
 
         // Specify the table name
         $tableName = 'orders';
@@ -220,9 +206,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
 
 // TODO
 // get orders from the database
-// $query = $db->prepare("SELECT order_id, customer_id, order_date, total_amount, order_status FROM orders");
-// $query->execute();
-// $orders = $query->fetchAll(PDO::FETCH_ASSOC);
 
 try {
     $result = $db->scan([

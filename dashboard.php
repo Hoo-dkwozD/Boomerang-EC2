@@ -13,9 +13,6 @@ use Aws\Exception\AwsException;
 
 // TODO
 // get total sales by date
-// $query = $db->prepare("SELECT DATE(sale_date) as sale_date, SUM(total_price) as total_sales FROM sales GROUP BY DATE(sale_date)");
-// $query->execute();
-// $totalSalesData = $query->fetchAll(PDO::FETCH_ASSOC);
 try {
     // Perform the Scan operation on the DynamoDB table
     $result = $db->scan([
@@ -46,9 +43,6 @@ try {
 
 // TODO
 // get total sales by product
-// $query = $db->prepare("SELECT product_id, SUM(quantity_sold) as total_quantity_sold FROM sales GROUP BY product_id");
-// $query->execute();
-// $totalQuantitySoldData = $query->fetchAll(PDO::FETCH_ASSOC);
 try {
     // Perform the Scan operation on the DynamoDB table
     $result = $db->scan([
@@ -134,15 +128,15 @@ try {
         type: 'line',
         data: {
             labels: [
-                <?php foreach ($totalSalesData as $data) { ?>
-                    '<?php echo $data['sale_date']; ?>',
+                <?php foreach ($totalSalesData as $key => $data) { ?>
+                    '<?php echo $key; ?>',
                 <?php } ?>
             ],
             datasets: [{
                 label: 'Total Sales',
                 data: [
-                    <?php foreach ($totalSalesData as $data) { ?>
-                        <?php echo $data['total_sales']; ?>,
+                    <?php foreach ($totalSalesData as $key => $data) { ?>
+                        <?php echo $data; ?>,
                     <?php } ?>
                 ],
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
@@ -165,15 +159,15 @@ try {
         type: 'bar',
         data: {
             labels: [
-                <?php foreach ($totalQuantitySoldData as $data) { ?>
-                    '<?php echo $data['product_id']; ?>',
+                <?php foreach ($totalQuantitySoldData as $key => $data) { ?>
+                    '<?php echo $key; ?>',
                 <?php } ?>
             ],
             datasets: [{
                 label: 'Total Quantity Sold',
                 data: [
-                    <?php foreach ($totalQuantitySoldData as $data) { ?>
-                        <?php echo $data['total_quantity_sold']; ?>,
+                    <?php foreach ($totalQuantitySoldData as $key => $data) { ?>
+                        <?php echo $data; ?>,
                     <?php } ?>
                 ],
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',

@@ -11,13 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"];
 
     // TODO
-    // $query = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
-    // $query->bindParam(':username', $username);
-    // $query->bindParam(':password', $password);
-    
-    // executes query prepared and fetch results as an associative array
-    // $query->execute();
-    // $user = $query->fetch(PDO::FETCH_ASSOC);
 
     try {
         $result = $db->scan([

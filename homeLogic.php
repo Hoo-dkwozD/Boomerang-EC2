@@ -9,9 +9,6 @@ use Aws\Exception\AwsException;
 function getProductCategories() {
     // TODO
     global $db;
-    // $query = $db->prepare("SELECT DISTINCT category FROM products");
-    // $query->execute();
-    // return $query->fetchAll(PDO::FETCH_COLUMN);
     try {
         $result = $db->scan([
             'TableName' => 'products',
@@ -33,10 +30,6 @@ function getProductCategories() {
 function getProducts($category) {
     // TODO
     global $db;
-    // $query = $db->prepare("SELECT * FROM products WHERE category = :category");
-    // $query->bindParam(':category', $category);
-    // $query->execute();
-    // return $query->fetchAll(PDO::FETCH_ASSOC);
     try {
         $result = $db->scan([
             'TableName' => 'products'

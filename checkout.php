@@ -35,13 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ]
             ];
 
-            // TODO
-            // update the products table with the reduced quantity
-            // $query = $db->prepare("UPDATE products SET quantity = quantity - :quantity WHERE id = :id");
-            // $query->bindParam(':quantity', $productQuantity);
-            // $query->bindParam(':id', $productId);
-            // $query->execute();
-
             try {
                 $get_pdt_params = [
                     "TableName" => "products",
@@ -88,12 +81,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // add purchase information into sales table
             $total_price = $productQuantity * $productPrice;
             $order_total_price += $total_price;
-            // $query = $db->prepare("INSERT INTO sales (purchase_id, product_id, quantity_sold, total_price, sale_date) VALUES (:purchase_id, :product_id, :quantity_sold, :total_price, NOW())");
-            // $query->bindParam(':purchase_id', $purchase_id);
-            // $query->bindParam(':product_id', $productId);
-            // $query->bindParam(':quantity_sold', $productQuantity);
-            // $query->bindValue(':total_price', $total_price);
-            // $query->execute();    
             
             // Get max sales id
             try {
@@ -141,10 +128,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // TODO
         // get shipping address information from the database - not storing in SESSION for security reasons
-        // $query = $db->prepare("SELECT shipping_address FROM users WHERE id = :id");
-        // $query->bindParam(':id', $_SESSION["id"]);
-        // $query->execute();
-        // $user = $query->fetch(PDO::FETCH_ASSOC);
 
         try {
             $get_user_params = [
@@ -167,15 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($user && isset($user['shipping_address']['S'])) {
             $shipping_address = $user['shipping_address']['S'];
-            // TODO
             // add order information into order table
-            // $query = $db->prepare("INSERT INTO orders (order_id, customer_id, total_amount, shipping_address, order_status) VALUES (:order_id, :customer_id, :total_amount, :shipping_address, :order_status)");
-            // $query->bindParam(':order_id', $purchase_id);
-            // $query->bindParam(':customer_id', $_SESSION["id"]);
-            // $query->bindParam(':total_amount', $order_total_price);
-            // $query->bindValue(':shipping_address', $shipping_address);
-            // $query->bindValue(':order_status', 'received');
-            // $query->execute();
 
             // Get max order id
             try {
@@ -262,9 +237,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 function generatePurchaseId() {
     // TODO
     global $db;
-    // $query = $db->query("SELECT MAX(purchase_id) as max_id FROM sales");
-    // $row = $query->fetch(PDO::FETCH_ASSOC);
-    // $latest_id = $row['max_id'];
     $get_max_purchase_id_params = [
         "TableName" => "sales",
         "ProjectionExpression" => "purchase_id"

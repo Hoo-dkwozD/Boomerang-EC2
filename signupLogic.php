@@ -14,12 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // TODO
     // check if username already exists
-    // $query = $db->prepare("SELECT * FROM users WHERE username = :username");
-    // $query->bindParam(':username', $username);
-    
-    // executes query prepared and fetch results as an associative array
-    // $query->execute();
-    // $user = $query->fetch(PDO::FETCH_ASSOC);
 
     try {
         $result = $db->scan([
@@ -54,17 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // TODO
     // insert new user in database if username and email do not exist
-    // $query = $db->prepare("INSERT INTO users (username, email, password, shipping_address) VALUES (:username, :email, :password, :shipping_address)");
-    // $query->bindParam(':username', $username);
-    // $query->bindParam(':email', $email);
-    // $query->bindParam(':password', $password);
-    // $query->bindParam(':shipping_address', $shipping_address);
-
-    // executes query prepared by creating new user
-    // $query->execute();
-
-    // get last id from users table
-    // $user_id = $db->lastInsertId();
 
     // Get max user id from users table
     try {
