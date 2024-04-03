@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     "Key" => [
                         "id" => ['N' => strval($productId)]
                     ],
-                    "UpdateExpression" => "SET #Q = 99",
+                    "UpdateExpression" => "SET #Q = :q",
                     "ExpressionAttributeValues" => [
                         ":q" => ['N' => strval($productQuantity)]
                     ],
