@@ -21,7 +21,7 @@ function getProductCategories() {
 
         $categories = [];
         foreach ($result['Items'] as $item) {
-            $categories[] = $item['category']['M']['S']['S'];
+            $categories[] = $item['category']['S'];
         }
         return array_unique($categories);
     } catch (AwsException $e) {
@@ -44,15 +44,15 @@ function getProducts($category) {
 
         $pdts = [];
         foreach ($result['Items'] as $item) {
-            if ($item['category']['M']['S']['S'] == $category) {
+            if ($item['category']['S'] == $category) {
                 $pdts[] = [
                     'id' => $item['id']['N'],
-                    'name' => $item['name']['M']['S']['S'],
-                    'category' => $item['category']['M']['S']['S'],
-                    'price' => $item['price']['M']['N']['S'],
-                    'description' => $item['description']['M']['S']['S'],
-                    'image_filename' => $item['image_filename']['M']['S']['S'],
-                    'quantity' => $item['quantity']['M']['N']['S']
+                    'name' => $item['name']['S'],
+                    'category' => $item['category']['S'],
+                    'price' => $item['price']['N'],
+                    'description' => $item['description']['S'],
+                    'image_filename' => $item['image_filename']['S'],
+                    'quantity' => $item['quantity']['N']
                 ];
             }
         }
