@@ -184,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // checkout on Stripe
         $checkout_session = \Stripe\Checkout\Session::create([
             "mode" => "payment",
-            "success_url" => "http://localhost/e-commerce/home.php",
+            "success_url" => "http://localhost/home.php",
             "line_items" => $line_items
         ]);
 
