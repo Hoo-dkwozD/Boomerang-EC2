@@ -95,10 +95,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // $query->bindValue(':total_price', $total_price);
             // $query->execute();    
             
+            // Get max sales id
+            try {
+                $get_max_sales_id_params = [
+                    "TableName" => "sales",
+                    "ProjectionExpression" => "id"
+                ];
+
+                $result = $db->scan(
+                    $get_max_sales_id_params
+                );
+                $maxValue = 0;
+                foreach ($result['Items'] as $item) {
+                    $value = intval($item['id']['N']);
+                    $maxValue = max($maxValue, $value);
+                }
+                $sales_id = $maxValue + 1;
+            } catch (AwsException $e) {
+                echo "Unable to get max sales id:\n";
+                echo $e->getMessage() . "\n";
+            }
+
             try {
                 $add_sale_params = [
                     "TableName" => "sales",
                     "Item" => [
+                        "id" => ['N' => strval($sales_id)],
                         "purchase_id" => ['N' => strval($purchase_id)],
                         "product_id" => ['N' => strval($productId)],
                         "quantity_sold" => ['N' => strval($productQuantity)],
@@ -155,10 +177,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // $query->bindValue(':order_status', 'received');
             // $query->execute();
 
+            // Get max order id
+            try {
+                $get_max_order_id_params = [
+                    "TableName" => "orders",
+                    "ProjectionExpression" => "id"
+                ];
+
+                $result = $db->scan(
+                    $get_max_order_id_params
+                );
+                $maxValue = 0;
+                foreach ($result['Items'] as $item) {
+                    $value = intval($item['id']['N']);
+                    $maxValue = max($maxValue, $value);
+                }
+                $order_id = $maxValue + 1;
+            } catch (AwsException $e) {
+                echo "Unable to get max order id:\n";
+                echo $e->getMessage() . "\n";
+            }
+
             try {
                 $add_order_params = [
                     "TableName" => "orders",
                     "Item" => [
+                        "id" => ['N' => strval($order_id)],
                         "order_id" => ['N' => strval($purchase_id)],
                         "customer_id" => ['N' => strval($_SESSION["id"])],
                         "total_amount" => ['N' => strval($order_total_price)],
