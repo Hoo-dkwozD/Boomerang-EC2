@@ -24,12 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
         try {
             $result = $db->updateItem([
                 'TableName' => 'orders',
-                'Key' => [
-                    'order_id' => ['N' => $order_id]
-                ],
+                'FilterExpression' => 'order_id = :order_id',
                 'UpdateExpression' => 'SET order_status = :order_status',
                 'ExpressionAttributeValues' => [
-                    ':order_status' => ['S' => 'order_sent']
+                    ':order_status' => ['S' => 'order_sent'],
+                    ':order_id' => ['N' => strval($order_id)]
                 ]
             ]);
         } catch (AwsException $e) {
@@ -66,20 +65,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
         // Define the parameters for the Query operation
         $params = [
             'TableName' => $tableName,
-            'KeyConditionExpression' => 'order_id = :order_id',
+            'FilterExpression' => 'order_id = :order_id',
             'ExpressionAttributeValues' => [
-                ':order_id' => ['S' => $order_id]
+                ':order_id' => ['N' => strval($order_id)]
             ]
         ];
 
         try {
             // Perform the Query operation on the GSI
-            $result = $db->query($params);
+            $result = $db->scan($params);
 
             // Check if any items were returned
             if (!empty($result['Items'])) {
                 // Extract the customer IDs from the query results
-                $customerIds = array_column($result['Items'], 'customer_id')['S'];
+                $customerIds = array_column($result['Items'], 'customer_id')['N'];
 
                 // Retrieve the user details from the main table
                 $users = [];
@@ -87,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
                     $userParams = [
                         'TableName' => 'users',
                         'Key' => [
-                            'id' => ['S' => $customerId]
+                            'id' => ['N' => $customerId]
                         ]
                     ];
                     $userResult = $db->getItem($userParams);
@@ -125,8 +124,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
         try {
             $result = $db->updateItem([
                 'TableName' => 'orders',
-                'Key' => [
-                    'order_id' => ['N' => $order_id]
+                'FilterExpression' => [
+                    'order_id' => ['N' => strval($order_id)]
                 ],
                 'UpdateExpression' => 'SET order_status = :order_status',
                 'ExpressionAttributeValues' => [
@@ -167,9 +166,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
         // Define the parameters for the Query operation
         $params = [
             'TableName' => $tableName,
-            'KeyConditionExpression' => 'order_id = :order_id',
+            'FilterExpression' => 'order_id = :order_id',
             'ExpressionAttributeValues' => [
-                ':order_id' => ['S' => $order_id]
+                ':order_id' => ['N' => strval($order_id)]
             ]
         ];
 
@@ -180,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
             // Check if any items were returned
             if (!empty($result['Items'])) {
                 // Extract the customer IDs from the query results
-                $customerIds = array_column($result['Items'], 'customer_id')['S'];
+                $customerIds = array_column($result['Items'], 'customer_id')['N'];
 
                 // Retrieve the user details from the main table
                 $users = [];
@@ -188,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["order_id"])) {
                     $userParams = [
                         'TableName' => 'users',
                         'Key' => [
-                            'id' => ['S' => $customerId]
+                            'id' => ['N' => $customerId]
                         ]
                     ];
                     $userResult = $db->getItem($userParams);
@@ -282,8 +281,8 @@ try {
                 <tr>
                     <td><?php echo $order['order_id']['N']; ?></td>
                     <td><?php echo $order['customer_id']['N']; ?></td>
-                    <td><?php echo $order['order_date']['S']; ?></td>
-                    <td><?php echo $order['total_amount']['N']; ?></td>
+                    <td><?php echo (date_create_from_format('Y-m-d H:i:s', $order['order_date']['S'])); ?></td>
+                    <td><?php echo (intval($order['total_amount']['N']) / 100); ?></td>
                     <td><?php echo $order['order_status']['S']; ?></td>
                     <td>
                         <?php if ($order['order_status']['S'] !== 'order_sent' && $order['order_status']['S'] !== 'resolved') { ?>

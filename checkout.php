@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         "purchase_id" => ['N' => strval($purchase_id)],
                         "product_id" => ['N' => strval($productId)],
                         "quantity_sold" => ['N' => strval($productQuantity)],
-                        "total_price" => ['N' => strval($total_price)],
+                        "total_price" => ['N' => strval($total_price * 100)],
                         "sale_date" => ['S' => strval(date("Y-m-d H:i:s"))]
                     ]
                 ];

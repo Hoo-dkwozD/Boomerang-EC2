@@ -28,8 +28,8 @@ try {
     // Loop through the returned items
     foreach ($result['Items'] as $item) {
         // Extract the sale_date and total_price attributes
-        $saleDate = $item['sale_date']['M']['S']['S'];
-        $totalPrice = $item['total_price']['M']['N']['N'];
+        $saleDate = date_create_from_format("Y-m-d H:i:s", $item['sale_date']['S']);
+        $totalPrice = intval($item['total_price']['N']) / 100;
 
         // Check if the date already exists in the totalSalesData array
         if (isset($totalSalesData[$saleDate])) {
@@ -61,8 +61,8 @@ try {
     // Loop through the returned items
     foreach ($result['Items'] as $item) {
         // Extract the product_id and quantity_sold attributes
-        $productId = $item['product_id']['M']['N']['N'];
-        $quantitySold = $item['quantity_sold']['M']['N']['N'];
+        $productId = intval($item['product_id']['N']);
+        $quantitySold = intval($item['quantity_sold']['N']);
 
         // Check if the product_id already exists in the totalQuantitySoldData array
         if (isset($totalQuantitySoldData[$productId])) {
