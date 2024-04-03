@@ -223,18 +223,20 @@ function generatePurchaseId() {
     // $latest_id = $row['max_id'];
     $get_max_purchase_id_params = [
         "TableName" => "sales",
-        "ProjectionExpression" => "purchase_id",
-        "Select" => "MAX"
+        "ProjectionExpression" => "purchase_id"
     ];
 
     $result = $db->scan(
         $get_max_purchase_id_params
     );
-
-    $latest_id = count($result['Items']) > 0 ? intval($result['Items'][0]['purchase_id']['N']) : 0;
+    $maxValue = 0;
+    foreach ($result['Items'] as $item) {
+        $value = intval($item['purchase_id']['N']);
+        $maxValue = max($maxValue, $value);
+    }
 
     // Increment the latest_id to generate a new purchase_id
-    $new_purchase_id = $latest_id + 1;
+    $new_purchase_id = $maxValue + 1;
     return $new_purchase_id;
 }
 ?>
