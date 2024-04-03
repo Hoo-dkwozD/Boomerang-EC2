@@ -14,24 +14,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // TODO
     // check if username already exists
-    $query = $db->prepare("SELECT * FROM users WHERE username = :username");
-    $query->bindParam(':username', $username);
+    // $query = $db->prepare("SELECT * FROM users WHERE username = :username");
+    // $query->bindParam(':username', $username);
     
     // executes query prepared and fetch results as an associative array
-    $query->execute();
-    $user = $query->fetch(PDO::FETCH_ASSOC);
+    // $query->execute();
+    // $user = $query->fetch(PDO::FETCH_ASSOC);
 
-    try {
-        $result = $db->getItem([
-            'TableName' => 'users',
-            'Key' => [
-                'username' => ['S' => $username]
-            ]
-        ]);
-        $user = $result['Item'][0] ? count($result['Item']) > 0 : NULL;
-    } catch (AwsException $e) {
-        $user = NULL;
-    }
+    // try {
+    //     $result = $db->getItem([
+    //         'TableName' => 'users',
+    //         'Key' => [
+    //             'username' => ['S' => $username]
+    //         ]
+    //     ]);
+    //     $user = $result['Item'][0] ? count($result['Item']) > 0 : NULL;
+    // } catch (AwsException $e) {
+    //     $user = NULL;
+    // }
 
     // if user exists in db
     if ($user) {
