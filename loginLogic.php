@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($user) {
         // check if user is an admin or customer - if admin, go to orderManagement.php else home.php
         if ($user['role']['S'] == 'admin') {
-            $_SESSION['id'] = $user['id'];
+            $_SESSION['id'] = intval($user['id']['N']);
             $_SESSION['username'] = $user['username']['S'];
             $_SESSION['email'] = $user['email']['S'];
             $_SESSION['role'] = 'admin';
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: dashboard.php");
             exit();
         } else {
-            $_SESSION['id'] = $user['id'];
+            $_SESSION['id'] = intval($user['id']['N']);
             $_SESSION['username'] = $user['username']['S'];
             $_SESSION['email'] = $user['email']['S'];
             $_SESSION['role'] = 'customer';
