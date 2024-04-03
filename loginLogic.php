@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $result = $db->scan([
             'TableName' => 'users',
-            'FilterExpression' => 'username = :username AND password = :password',
+            'FilterExpression' => 'username = :username and password = :password',
             'ExpressionAttributeValues'=> [
                 ':username' => ['S' => $username],
                 ':password' => ['S' => $password]
