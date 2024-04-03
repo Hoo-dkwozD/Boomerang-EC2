@@ -21,18 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         $result = $db->scan([
-            'TableName' => 'users',
-            'FilterExpression' => '#username = :usernameVal AND #password = :passwordVal',
-            'ExpressionAttributeNames' => [
-                '#username' => 'username',
-                '#password' => 'password',
-            ],
-            'ExpressionAttributeValues' => [
-                ':usernameVal' => ['S' => $username],
-                ':passwordVal' => ['S' => $password],
-            ],
+            'TableName' => 'users'
         ]);
-        $user = $result['Items'][0];
+        foreach ($result['Items'] as $user) {
+            print_r($user['username']);
+        }
+        exit();
     } catch (AwsException $e) {
         $user = NULL;
     }
