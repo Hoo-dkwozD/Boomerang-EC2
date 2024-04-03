@@ -32,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         print_r($user);
         print("hello");
         print_r($result);
+        exit();
         // foreach ($result['Items'] as $user) {
         //     if ($user['username']['M']['S']['S'] == $username && $user['password']['M']['S']['S'] == $password) {
         //         $user = [
