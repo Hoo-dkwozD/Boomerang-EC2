@@ -22,13 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $result = $db->scan([
             'TableName' => 'users',
-            // 'FilterExpression' => 'username = :username and password = :password',
-            // 'ExpressionAttributeValues'=> [
-            //     ':username' => ['S' => $username],
-            //     ':password' => ['S' => $password]
-            // ]
+            'FilterExpression' => '#username = :usernameVal AND #password = :passwordVal',
+            'ExpressionAttributeNames' => [
+                '#username' => 'username',
+                '#password' => 'password',
+            ],
+            'ExpressionAttributeValues' => [
+                ':usernameVal' => ['S' => $username],
+                ':passwordVal' => ['S' => $password],
+            ],
         ]);
-        $user = $result['Items'][0] ? count($result['Items']) > 0 : NULL;
+        $user = $result['Items'][0];
     } catch (AwsException $e) {
         $user = NULL;
     }
