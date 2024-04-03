@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             } catch (AwsException $e) {
                 echo "Unable to update product quantity:\n";
                 echo $e->getMessage() . "\n";
+                exit();
             }
 
             // TODO
@@ -84,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         "product_id" => ['N' => strval($productId)],
                         "quantity_sold" => ['N' => strval($productQuantity)],
                         "total_price" => ['N' => strval($total_price)],
-                        "sale_date" => ['S' => date("Y-m-d H:i:s")]
+                        "sale_date" => ['S' => strval(date("Y-m-d H:i:s"))]
                     ]
                 ];
 
@@ -94,6 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             } catch (AwsException $e) {
                 echo "Unable to add sale:\n";
                 echo $e->getMessage() . "\n";
+                exit();
             }
         }
 
@@ -120,10 +122,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } catch (AwsException $e) {
             echo "Unable to get user:\n";
             echo $e->getMessage() . "\n";
+            exit();
         }
 
-        if ($user && isset($user['shipping_address']['S'])) {
-            $shipping_address = $user['shipping_address']['S'];
+        if ($user && isset($user['shipping_address']['M']['S']['S'])) {
+            $shipping_address = $user['shipping_address']['M']['S']['S'];
             // TODO
             // add order information into order table
             // $query = $db->prepare("INSERT INTO orders (order_id, customer_id, total_amount, shipping_address, order_status) VALUES (:order_id, :customer_id, :total_amount, :shipping_address, :order_status)");
@@ -152,6 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             } catch (AwsException $e) {
                 echo "Unable to add order:\n";
                 echo $e->getMessage() . "\n";
+                exit();
             }
         }
 
