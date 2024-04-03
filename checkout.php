@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     ],
                     "UpdateExpression" => "SET #Q = :q",
                     "ExpressionAttributeValues" => [
-                        ":q" => ['M' => ['N' => ['S' => strval($productQuantity)]]]
+                        ":q" => ['M' => ['S' => ['N' => strval($productQuantity)]]]
                     ],
                     "ExpressionAttributeNames" => [
                         "#Q" => "quantity"
