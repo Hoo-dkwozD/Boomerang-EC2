@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // $user = $query->fetch(PDO::FETCH_ASSOC);
 
     try {
-        $result = $db->getItem([
+        $result = $db->query([
             'TableName' => 'users',
             'KeyConditionExpression' => 'username = :username AND password = :password',
             'ExpressionAttributeValues'=> [
