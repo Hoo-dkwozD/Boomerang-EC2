@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $update_pdt_params = [
                     "TableName" => "products",
                     "Key" => [
-                        "id" => ['N' => $productId]
+                        "id" => ['N' => strval($productId)]
                     ],
                     "UpdateExpression" => "SET #Q = #Q - :q",
                     "ExpressionAttributeValues" => [
