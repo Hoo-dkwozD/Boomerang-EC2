@@ -108,13 +108,13 @@ try {
         <h1 class="mt-4 mb-4">Admin Dashboard</h1>
     </div>
 
-    <div class="container" style="padding: 20px;">
+    <div class="container" style="padding: 20px; width: 100vw;">
         <div class="row">
             <div class="col-md-6">
-                <canvas id="salesChart" width="400" height="200" style="margin-top: 20px; max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px;"></canvas>
+                <canvas id="salesChart" width="100vw" height="100vh" style="margin-top: 20px; max-width: 100%; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px;"></canvas>
             </div>
             <div class="col-md-6">
-                <canvas id="productChart" width="400" height="200" style="margin-top: 20px; max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px;"></canvas>
+                <canvas id="productChart" width="100vw" height="100vh" style="margin-top: 20px; max-width: 100%; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px;"></canvas>
             </div>
         </div>
     </div>

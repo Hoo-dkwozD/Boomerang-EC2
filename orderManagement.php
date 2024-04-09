@@ -247,45 +247,47 @@ try {
     <!-- user profile modal -->
     <?php include 'userModal.php'; ?>
 
-    <h1>Order Management</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Customer ID</th>
-                <th>Order Date</th>
-                <th>Total Amount</th>
-                <th>Order Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($orders as $order) { ?>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Order Management</h1>
+        <table class="table table-bordered mx-auto" style="width: 100%;">
+            <thead>
                 <tr>
-                    <td><?php echo $order['order_id']['N']; ?></td>
-                    <td><?php echo $order['customer_id']['N']; ?></td>
-                    <td><?php echo (date_create_from_format('Y-m-d H:i:s', $order['order_date']['S'])); ?></td>
-                    <td><?php echo (intval($order['total_amount']['N']) / 100); ?></td>
-                    <td><?php echo $order['order_status']['S']; ?></td>
-                    <td>
-                        <?php if ($order['order_status']['S'] !== 'order_sent' && $order['order_status']['S'] !== 'resolved') { ?>
-                            <form action="" method="POST">
-                                <input type="hidden" name="order_status" value="order_sent">
-                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']['N']; ?>">
-                                <button type="submit">Order Sent</button>
-                            </form>
-                        <?php } ?>
-                        <?php if ($order['order_status']['S'] !== 'resolved' && $order['order_status']['S'] === 'order_sent') { ?>
-                            <form action="" method="POST">
-                                <input type="hidden" name="order_status" value="resolved">
-                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']['N']; ?>">
-                                <button type="submit">Resolved</button>
-                            </form>
-                        <?php } ?>
-                    </td>
+                    <th>Order ID</th>
+                    <th>Customer ID</th>
+                    <th>Order Date</th>
+                    <th>Total Amount</th>
+                    <th>Order Status</th>
+                    <th>Action</th>
                 </tr>
-            <?php } ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($orders as $order) { ?>
+                    <tr>
+                        <td><?php echo $order['order_id']['N']; ?></td>
+                        <td><?php echo $order['customer_id']['N']; ?></td>
+                        <td><?php echo (date_create_from_format('Y-m-d H:i:s', $order['order_date']['S'])); ?></td>
+                        <td><?php echo (intval($order['total_amount']['N']) / 100); ?></td>
+                        <td><?php echo $order['order_status']['S']; ?></td>
+                        <td>
+                            <?php if ($order['order_status']['S'] !== 'order_sent' && $order['order_status']['S'] !== 'resolved') { ?>
+                                <form action="" method="POST">
+                                    <input type="hidden" name="order_status" value="order_sent">
+                                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']['N']; ?>">
+                                    <button type="submit">Order Sent</button>
+                                </form>
+                            <?php } ?>
+                            <?php if ($order['order_status']['S'] !== 'resolved' && $order['order_status']['S'] === 'order_sent') { ?>
+                                <form action="" method="POST">
+                                    <input type="hidden" name="order_status" value="resolved">
+                                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']['N']; ?>">
+                                    <button type="submit">Resolved</button>
+                                </form>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
